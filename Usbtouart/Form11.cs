@@ -50,6 +50,15 @@ namespace WindowsFormsApplication1
             {
                 MessageBox.Show("Fail");
             }
+
+            if (rxIntcmd == 0x11)
+            {
+                MessageBox.Show("ok command");
+            }
+            else
+            {
+                MessageBox.Show("Fail");
+            }
             /* 
              int dataLength = mySerialPort.BytesToRead;
              byte[] data = new byte[dataLength];
