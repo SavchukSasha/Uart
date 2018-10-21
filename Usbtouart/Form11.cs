@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Windows.Forms;
+using Usbtouart;
 
 namespace WindowsFormsApplication1
 {
     public partial class Form11 : Form
     {
+        public static string st ;
         
-        public Form11()
+        public Form11(string portName)
         {
             InitializeComponent();
-         
-         
+            
             if (!mySerialPort.IsOpen)
             {
+                mySerialPort.PortName = portName;
                 mySerialPort.Open();
                 tbRX.Text = "open :) ";
             }
@@ -21,7 +23,6 @@ namespace WindowsFormsApplication1
 
         }
 
-        private string rxString;
         private int rxInt;
         private int rxIntcmd;
         private int rxIntl;
@@ -95,6 +96,7 @@ namespace WindowsFormsApplication1
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             mySerialPort.Close();
+            Application.Exit(); 
         }
 
         private void tbTX_KeyPress(object sender, KeyPressEventArgs e)
@@ -109,7 +111,7 @@ namespace WindowsFormsApplication1
 
         private void Form1_Load(object sender, EventArgs e)
         {
-     
+            
         }
 
         private void button1_Click(object sender, EventArgs e)

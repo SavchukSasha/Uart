@@ -126,7 +126,7 @@
             "COM 5",
             "COM 6",
             "COM 19"});
-            this.comboBox1.Location = new System.Drawing.Point(643, 151);
+            this.comboBox1.Location = new System.Drawing.Point(643, 141);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(75, 21);
             this.comboBox1.TabIndex = 8;
@@ -251,7 +251,6 @@
         private System.Windows.Forms.RichTextBox tbTX;
         private System.Windows.Forms.RichTextBox tbRX;
         private System.Windows.Forms.CheckBox checkBox1;
-        private System.IO.Ports.SerialPort mySerialPort;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.PictureBox pictureBox1;
@@ -263,6 +262,7 @@
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Label label1;
+        protected System.IO.Ports.SerialPort mySerialPort;
     }
 }
 
