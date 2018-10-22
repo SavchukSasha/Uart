@@ -14,21 +14,21 @@ namespace WindowsFormsApplication1
             
             if (!mySerialPort.IsOpen)
             {
+                
                 mySerialPort.PortName = portName;
                 mySerialPort.Open();
                 tbRX.Text = "open :) ";
+                
             }
             else
                 tbRX.Text = "busy :( ";
 
         }
 
-        private int rxInt;
-        private int rxIntcmd;
-        private int rxIntl;
-        private int rxIntl2;
-        private int rxIntl3;
-        
+        private int rxlen;
+        private int[] masinput;
+        DateTime ThToday = DateTime.Now;
+        string ThData;
         /// <summary>
         /// 
         /// </summary>
@@ -36,30 +36,22 @@ namespace WindowsFormsApplication1
         /// <param name="e"></param>
         private void mySerialPort_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
-            rxInt = mySerialPort.ReadByte();
-            rxIntcmd = mySerialPort.ReadByte();
-            rxIntl = mySerialPort.ReadByte();
-            rxIntl2 = mySerialPort.ReadByte();
-            rxIntl3 = mySerialPort.ReadByte();
             
 
-            if(rxInt == 0x55)
+            if (mySerialPort.ReadByte() == 0x55)
             {
-                MessageBox.Show("ok");
+                rxlen = mySerialPort.ReadByte();
+                masinput = new int[rxlen];
+                for (int i = 0; i < rxlen; i++)
+                {
+                    masinput[i] = mySerialPort.ReadByte();
+                }
             }
             else
             {
                 MessageBox.Show("Fail");
             }
 
-            if (rxIntcmd == 0x11)
-            {
-                MessageBox.Show("ok command");
-            }
-            else
-            {
-                MessageBox.Show("Fail");
-            }
             /* 
              int dataLength = mySerialPort.BytesToRead;
              byte[] data = new byte[dataLength];
@@ -67,18 +59,39 @@ namespace WindowsFormsApplication1
              if (nbrDataRead == 0)
                  return;
              */
-            this.Invoke(new EventHandler(displayText));
+            this.Invoke(new EventHandler(checkData));
+
+        }
+        private void checkData(object o, EventArgs e)
+        {
+            ThData = ThToday.ToString();
+
+            if(masinput[0] == 0x11)
+            {
+                if(masinput[1] == 0x23)
+                    tbTX.AppendText(ThData + " Check first one" + "\n");
+                else
+                    tbTX.AppendText(ThData + " Not correct word from first" + "\n");
+            }else if(masinput[0] == 0x13)
+            {
+                if (masinput[1] == 0x33)
+                    tbTX.AppendText(ThData + " Alert from first one" + "\n");
+                else
+                    tbTX.AppendText(ThData + " Not correct word alert from first" + "\n");
+            }        
 
         }
 
         private void displayText(object o, EventArgs e)
         {
-           
-            tbRX.AppendText(rxInt + " ");
-            tbRX.AppendText("\n");
+
+            for (int i = 0; i < rxlen; i++)
+            {
+                tbRX.AppendText(masinput[i].ToString());
+                tbRX.AppendText("\n");
+            }           
            // pictureBox1.Show();
         }
-
         
         private void bSend_Click(object sender, EventArgs e)
         {
@@ -89,8 +102,8 @@ namespace WindowsFormsApplication1
         private void bClear_Click(object sender, EventArgs e)
         {
             tbTX.Clear();
-            tbRX.Clear();
-          //  pictureBox1.Hide();
+            //tbRX.Clear();
+            //pictureBox1.Hide();
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
@@ -101,12 +114,7 @@ namespace WindowsFormsApplication1
 
         private void tbTX_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (mySerialPort.IsOpen && checkBox1.Checked)
-            {
-                char[] ch = new char[1];
-                ch[0] = e.KeyChar;
-                mySerialPort.Write(ch, 0, 1);
-            }
+            
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -114,22 +122,18 @@ namespace WindowsFormsApplication1
             
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void first1check_Click(object sender, EventArgs e)
         {
-            // mySerialPort.Write(tbTX.Text);
-            //  mySerialPort.Write("20");
             mySerialPort.Write(new byte[] { 0x55, 0x3, 0x11, 0x23, 0x23 }, 0, 5);
+            
+            tbTX.AppendText("---->" + ThToday.ToString() + " Check first one" + "\n");
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void first1alert_Click(object sender, EventArgs e)
         {
-
+            mySerialPort.Write(new byte[] { 0x55, 0x3, 0x13, 0x33, 0x33 }, 0, 5);
+    
+            tbTX.AppendText("---->" + ThToday.ToString() + " Alert first one" + "\n");
         }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
     }
 }
